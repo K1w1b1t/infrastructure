@@ -1,7 +1,11 @@
+data "oci_objectstorage_namespace" "current" {
+    compartment_id = var.compartment_ocid
+}
+
 resource "oci_objectstorage_bucket" "test_bucket" {
     compartment_id = var.compartment_ocid
     name           = "bucket-teste-terraform"
-    namespace      = "gr8jqsbktuzk" # O namespace que você informou
+    namespace      = data.oci_objectstorage_namespace.current.namespace
     storage_tier   = "Standard"
-    visibility     = "Private"
+    access_type    = "NoPublicAccess"
 }
