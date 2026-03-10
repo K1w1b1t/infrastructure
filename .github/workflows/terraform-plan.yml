@@ -10,6 +10,8 @@ jobs:
     env:
       TFSTATE_BUCKET: ${{ secrets.TFSTATE_BUCKET }}
       TF_NAMESPACE: ${{ secrets.TF_NAMESPACE }}
+      TF_VAR_compartment_ocid: ${{ secrets.OCI_TENANCY_OCID }} # Aqui assumimos que é na tenancy (root container), substitua se for um sub-compartment diferente
+      TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
     steps:
       - uses: actions/checkout@v4
 
