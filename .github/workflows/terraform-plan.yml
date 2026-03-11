@@ -16,7 +16,6 @@ jobs:
       - name: SonarQube Scan & Gate
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-        run: |
           export SONAR_SCANNER_VERSION=8.0.1.6346
           export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux-x64
           curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux-x64.zip
@@ -33,9 +32,6 @@ jobs:
     name: Terraform Plan
     runs-on: ubuntu-latest
     needs: sonarqube # Só roda se o job do SonarQube passar!
-    defaults:
-      run:
-        working-directory: ./infra/terraform
     env:
       TFSTATE_BUCKET: ${{ secrets.TFSTATE_BUCKET }}
       TF_NAMESPACE: ${{ secrets.TF_NAMESPACE }}
@@ -51,7 +47,6 @@ jobs:
           terraform_version: 1.5.7
 
       - name: Configure OCI credentials
-        run: |
           mkdir -p ~/.oci
           echo "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
           chmod 600 ~/.oci/oci_api_key.pem
@@ -65,11 +60,9 @@ jobs:
           EOF
 
       - name: Terraform Init
-        run: |
           terraform init -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="namespace=${TF_NAMESPACE}" -reconfigure
 
       - name: Terraform Plan
-        run: |
           terraform plan -out=tfplan
           terraform show -no-color tfplan > plan.txt
 
@@ -77,4 +70,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
-          path: infra/terraform/plan.txt
+          path: plan.txt
