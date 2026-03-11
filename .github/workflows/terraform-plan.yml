@@ -30,13 +30,18 @@ jobs:
             -Dsonar.qualitygate.wait=true
 
   terraform:
+    name: Terraform Plan
     runs-on: ubuntu-latest
     needs: sonarqube # Só roda se o job do SonarQube passar!
+    defaults:
+      run:
+        working-directory: ./infra/terraform
     env:
       TFSTATE_BUCKET: ${{ secrets.TFSTATE_BUCKET }}
       TF_NAMESPACE: ${{ secrets.TF_NAMESPACE }}
       TF_VAR_compartment_ocid: ${{ secrets.OCI_TENANCY_OCID }} # Aqui assumimos que é na tenancy (root container)
       TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
+      TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -72,4 +77,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
-          path: plan.txt
+          path: infra/terraform/plan.txt
