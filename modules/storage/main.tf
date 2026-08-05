@@ -75,6 +75,9 @@ resource "oci_objectstorage_bucket" "media" {
 resource "oci_identity_user" "app" {
   compartment_id = var.tenancy_ocid
   name           = local.user_name
+  # IDCS exige e-mail primário na criação. Plus-addressing mantém tudo na
+  # caixa tech@kiwibit.com.br mas com endereço único por ambiente.
+  email          = "tech+media-${var.environment}@kiwibit.com.br"
   description    = "Usuário de serviço do kiwibit_web para upload de mídia (${var.environment})"
 
   freeform_tags = {
