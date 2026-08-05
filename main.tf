@@ -15,3 +15,21 @@ module "compute" {
   instance_shape   = var.instance_shape
   ssh_public_key   = var.ssh_public_key
 }
+
+# Buckets de mídia do kiwibit_web — um por ambiente, com credenciais isoladas.
+# staging atende a branch `release`; prod atende a `main`.
+module "storage_staging" {
+  source           = "./modules/storage"
+  environment      = "staging"
+  compartment_ocid = var.compartment_ocid
+  tenancy_ocid     = var.tenancy_ocid
+  region           = var.region
+}
+
+module "storage_prod" {
+  source           = "./modules/storage"
+  environment      = "prod"
+  compartment_ocid = var.compartment_ocid
+  tenancy_ocid     = var.tenancy_ocid
+  region           = var.region
+}

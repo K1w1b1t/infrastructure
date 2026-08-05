@@ -28,6 +28,31 @@ A arquitetura base utiliza o plano *Always Free* da **Oracle Cloud Infrastructur
 - **Subnet Pública:** Sub-rede `10.0.1.0/24` onde os bots rodam.
 - **Compute Instance (VPS Minimal):** Uma máquina virtual (shape: `VM.Standard.E2.1.Micro`, 1 OCPU, 1GB RAM) rodando **Ubuntu 22.04**.
 - **Autenticação Automática SSH:** Injeção de chave pública via *metadata* durante o provisionamento.
+- **Object Storage (mídia do `kiwibit_web`):** Dois buckets — `kiwibit-media-staging` e `kiwibit-media-prod` — com `access_type = ObjectRead` (leitura pública de objeto, listagem privada), cada um com usuário IAM, grupo, policy escopada e Customer Secret Key próprios.
+
+### 📦 Módulo `modules/storage` — buckets de mídia
+
+Instanciado duas vezes no `main.tf` raiz (`storage_staging` e `storage_prod`), espelhando os ambientes do `kiwibit_web`: **staging** atende a branch `release`, **prod** atende a `main`.
+
+**Por que dois buckets e dois pares de credenciais, em vez de um bucket com dois prefixos?** Isolamento de blast radius: a policy de cada grupo é escopada com `where target.bucket.name = '<bucket do ambiente>'`, então uma chave de staging vazada não consegue escrever nem apagar mídia de produção.
+
+Os recursos de identidade (`oci_identity_user`, `_group`, `_policy`) usam `compartment_id = var.tenancy_ocid`, porque identidade na OCI só existe no compartment raiz.
+
+**Depois do apply**, leia os outputs e cadastre nos dois destinos — Vercel (Preview/Production) e GitHub Environments (`Preview`/`Production`):
+
+| Variável do app | Origem |
+| --- | --- |
+| `OCI_STORAGE_NAMESPACE` | `terraform output media_namespace` (igual nos dois ambientes) |
+| `OCI_STORAGE_REGION` | `sa-saopaulo-1` |
+| `OCI_STORAGE_BUCKET` | `media_staging_bucket` / `media_prod_bucket` |
+| `OCI_S3_ACCESS_KEY_ID` | `media_staging_access_key_id` / `media_prod_access_key_id` |
+| `OCI_S3_SECRET_ACCESS_KEY` | `terraform output -raw media_staging_secret_access_key` (idem prod) |
+
+**⚠️ Pontos de atenção antes do apply:**
+
+1. **São 2 usuários IAM novos.** O Always Free tem teto de usuários na tenancy — se o apply falhar por limite, o fallback é um único módulo com policy cobrindo os dois buckets, **abrindo mão do isolamento**. Registre a decisão aqui se isso acontecer.
+2. **As duas Customer Secret Keys ficam no state do Resource Manager.** É o custo de gerenciar credencial por IaC. Se preferir, remova o recurso `oci_identity_customer_secret_key` do módulo e gere as chaves pelo console.
+3. **Always Free limita 50.000 requests de Object Storage por mês.** O `kiwibit_web` serve toda imagem via `next/image`, o que faz a Vercel cachear no edge (TTL padrão de 31 dias) e reduz as leituras no origin a praticamente nada. **Nunca** referenciar a URL do bucket direto no HTML.
 
 **Pipelines (CI/CD) Implementadas (`.github/workflows`):**
 A automação ocorre através do GitHub Actions para toda PR criada na `main`:
