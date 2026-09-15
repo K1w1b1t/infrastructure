@@ -1,0 +1,26 @@
+schemaVersion: "1.1.0"
+locale: "pt-BR"
+
+variableGroups:
+  - title: "PostHog"
+    variables:
+      - posthog_api_key
+      - posthog_host
+
+variables:
+  posthog_api_key:
+    type: string
+    title: "PostHog Personal API Key"
+    description: "Chave pessoal usada pelo Terraform para administrar recursos no PostHog. Nao use a Project API Key (phc_...)."
+    required: true
+    sensitive: true
+
+  posthog_host:
+    type: enum
+    title: "PostHog region"
+    description: "Selecione a regiao onde a conta PostHog Cloud foi criada."
+    required: false
+    default: "https://us.posthog.com"
+    enum:
+      - "https://us.posthog.com"
+      - "https://eu.posthog.com"
