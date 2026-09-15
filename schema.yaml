@@ -26,9 +26,9 @@ variables:
     default: "Kiwibit shared telemetry"
 
   posthog_app_urls:
-    type: list
+    type: string
     title: "Dominios autorizados PostHog"
-    description: "Lista de URLs HTTPS exatas usadas pelos dois apps em staging e producao; sem curingas."
+    description: "Lista JSON de URLs HTTPS exatas usadas pelos dois apps em staging e producao; sem curingas."
     required: true
 
   posthog_discord_webhook_url:

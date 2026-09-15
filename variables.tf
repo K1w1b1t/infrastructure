@@ -39,11 +39,11 @@ variable "posthog_project_name" {
 
 variable "posthog_app_urls" {
   description = "Dominios HTTPS autorizados para Web Analytics e Session Replay, sem curingas"
-  type        = list(string)
+  type        = string
 
   validation {
-    condition     = length(var.posthog_app_urls) > 0 && alltrue([for url in var.posthog_app_urls : can(regex("^https://", url))])
-    error_message = "posthog_app_urls deve conter ao menos um dominio HTTPS completo."
+    condition     = can(jsondecode(var.posthog_app_urls)) && length(jsondecode(var.posthog_app_urls)) > 0 && alltrue([for url in jsondecode(var.posthog_app_urls) : can(regex("^https://", url))])
+    error_message = "posthog_app_urls deve ser uma lista JSON nao vazia de dominios HTTPS completos."
   }
 }
 

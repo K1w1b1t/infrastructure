@@ -1,3 +1,7 @@
+locals {
+  posthog_app_urls = jsondecode(var.posthog_app_urls)
+}
+
 # Projeto PostHog único para hirepair_web e kiwibit_web.
 # Importe este endereço no mesmo OCI Resource Manager Stack se o projeto já existir.
 resource "posthog_project" "shared_telemetry" {
@@ -8,8 +12,8 @@ resource "posthog_project" "shared_telemetry" {
 resource "posthog_project_settings" "shared_telemetry" {
   project_id = posthog_project.shared_telemetry.id
 
-  app_urls          = var.posthog_app_urls
-  recording_domains = var.posthog_app_urls
+  app_urls          = local.posthog_app_urls
+  recording_domains = local.posthog_app_urls
 
   autocapture_exceptions_opt_in = true
   autocapture_web_vitals_opt_in = true
