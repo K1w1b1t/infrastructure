@@ -1,5 +1,5 @@
 locals {
-  posthog_app_urls = jsondecode(var.posthog_app_urls)
+  posthog_app_urls = jsondecode(jsondecode(var.posthog_app_urls))
 }
 
 # Projeto PostHog único para hirepair_web e kiwibit_web.
