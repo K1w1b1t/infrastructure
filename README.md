@@ -67,8 +67,9 @@ Para interagir com este repositório, você precisa configurar os segredos reque
 
 ### PostHog no OCI Resource Manager
 
-O provider oficial do PostHog é autenticado por uma **Personal API Key** armazenada
-como variável sensível no Stack do OCI Resource Manager. Cadastre:
+O provider oficial do PostHog exige uma **Personal API Key**. Após atualizar a
+revisão do Stack com a `main`, o OCI Resource Manager exibirá `posthog_api_key`
+como campo obrigatório e sensível em **Edit stack > Variables**. Cadastre:
 
 | Variável Terraform | Valor |
 | --- | --- |

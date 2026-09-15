@@ -28,7 +28,6 @@ variable "ssh_public_key" {
 variable "posthog_api_key" {
   description = "Personal API Key usada pelo Terraform para administrar recursos no PostHog"
   type        = string
-  default     = null
   sensitive   = true
 }
 
