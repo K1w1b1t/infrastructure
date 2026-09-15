@@ -74,11 +74,21 @@ como campo obrigatório e sensível em **Edit stack > Variables**. Cadastre:
 | Variável Terraform | Valor |
 | --- | --- |
 | `posthog_api_key` | Personal API Key criada nas configurações pessoais do PostHog |
-| `posthog_host` | `https://us.posthog.com` (padrão) ou `https://eu.posthog.com` |
+| `posthog_host` | `https://us.posthog.com` (padrao) ou `https://eu.posthog.com` |
+| `posthog_project_name` | Nome do unico projeto compartilhado |
+| `posthog_app_urls` | URLs HTTPS exatas de staging/producao dos dois apps |
+| `posthog_discord_webhook_url` | Incoming Webhook do canal de alertas, sensivel |
 
 `posthog_api_key` é uma credencial administrativa e nunca deve ser adicionada ao
 Git nem exposta aos frontends. Ela é diferente da Project API Key usada pelos
 SDKs `posthog-js` e `posthog-node` para enviar eventos.
+
+O Stack cria o projeto compartilhado, habilita Error Tracking e Session Replay,
+restringe dominios e cria uma Destination Discord para `` e
+`ai_fallback_triggered` em producao. Apos o apply autorizado, use os outputs
+sensiveis `posthog_project_api_key` e `posthog_project_id` somente no dashboard
+da Vercel. O provider ainda nao expoe sampling por trigger de Replay: configure
+no PostHog uma vez, com 10% geral e 100% quando houver ``.
 
 ---
 

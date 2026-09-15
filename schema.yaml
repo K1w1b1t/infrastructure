@@ -6,12 +6,35 @@ variableGroups:
     variables:
       - posthog_api_key
       - posthog_host
+      - posthog_project_name
+      - posthog_app_urls
+      - posthog_discord_webhook_url
 
 variables:
   posthog_api_key:
     type: string
     title: "PostHog Personal API Key"
     description: "Chave pessoal usada pelo Terraform para administrar recursos no PostHog. Nao use a Project API Key (phc_...)."
+    required: true
+    sensitive: true
+
+  posthog_project_name:
+    type: string
+    title: "Nome do projeto PostHog"
+    description: "Um unico projeto compartilhado entre hirepair_web e kiwibit_web."
+    required: false
+    default: "Kiwibit shared telemetry"
+
+  posthog_app_urls:
+    type: list
+    title: "Dominios autorizados PostHog"
+    description: "Lista de URLs HTTPS exatas usadas pelos dois apps em staging e producao; sem curingas."
+    required: true
+
+  posthog_discord_webhook_url:
+    type: string
+    title: "PostHog Discord webhook"
+    description: "Incoming Webhook do Discord para alertas de erro de producao."
     required: true
     sensitive: true
 
