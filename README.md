@@ -65,6 +65,20 @@ A automação ocorre através do GitHub Actions para toda PR criada na `main`:
 
 Para interagir com este repositório, você precisa configurar os segredos requeridos para as pipelines funcionarem e interagir com o estado do Terraform no Cloud de forma remota. 
 
+### PostHog no OCI Resource Manager
+
+O provider oficial do PostHog é autenticado por uma **Personal API Key** armazenada
+como variável sensível no Stack do OCI Resource Manager. Cadastre:
+
+| Variável Terraform | Valor |
+| --- | --- |
+| `posthog_api_key` | Personal API Key criada nas configurações pessoais do PostHog |
+| `posthog_host` | `https://us.posthog.com` (padrão) ou `https://eu.posthog.com` |
+
+`posthog_api_key` é uma credencial administrativa e nunca deve ser adicionada ao
+Git nem exposta aos frontends. Ela é diferente da Project API Key usada pelos
+SDKs `posthog-js` e `posthog-node` para enviar eventos.
+
 ---
 
 ## 🔑 Tutorial: Configurando e Gerando sua Chave SSH
