@@ -28,6 +28,9 @@
 - Antes de propor alterações, execute `terraform fmt -check` nos arquivos tocados,
   `terraform init -backend=false` e `terraform validate`.
 - Revise o plano antes do merge, especialmente recursos que podem sair do Free Tier.
+- A imagem da VPS é resolvida dinamicamente somente durante sua criação. Não remova
+  o `ignore_changes` de `source_details[0].source_id` sem planejar explicitamente a
+  atualização ou substituição da instância e a preservação dos seus dados.
 - Não execute `terraform apply` localmente nem altere o backend/state sem autorização
   explícita.
 - Preserve alterações não relacionadas que já estiverem no worktree.
