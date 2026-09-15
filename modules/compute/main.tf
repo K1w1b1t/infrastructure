@@ -40,6 +40,14 @@ resource "oci_core_instance" "bug_bounty_vps" {
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
   }
+
+  # A data source seleciona a imagem mais recente apenas na criação. Tentar trocar
+  # o source_id de uma instância existente não atualiza o sistema operacional e,
+  # em instâncias antigas com boot volume de 47 GB, a API atual da OCI rejeita o
+  # UpdateInstance porque hoje exige no mínimo 50 GB.
+  lifecycle {
+    ignore_changes = [source_details[0].source_id]
+  }
 }
 
 output "public_ip" {
