@@ -31,6 +31,28 @@ variable "posthog_api_key" {
   sensitive   = true
 }
 
+variable "posthog_project_name" {
+  description = "Nome do projeto PostHog compartilhado entre hirepair_web e kiwibit_web"
+  type        = string
+  default     = "Kiwibit shared telemetry"
+}
+
+variable "posthog_app_urls" {
+  description = "Dominios HTTPS autorizados para Web Analytics e Session Replay, sem curingas"
+  type        = list(string)
+
+  validation {
+    condition     = length(var.posthog_app_urls) > 0 && alltrue([for url in var.posthog_app_urls : can(regex("^https://", url))])
+    error_message = "posthog_app_urls deve conter ao menos um dominio HTTPS completo."
+  }
+}
+
+variable "posthog_discord_webhook_url" {
+  description = "Incoming Webhook Discord para alertas PostHog de producao"
+  type        = string
+  sensitive   = true
+}
+
 variable "posthog_host" {
   description = "URL da região da conta PostHog Cloud"
   type        = string
