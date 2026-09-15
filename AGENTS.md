@@ -9,7 +9,8 @@
 - Não crie um workflow de `terraform apply` no GitHub Actions. O apply e o state
   permanecem no OCI Resource Manager, salvo decisão explícita dos mantenedores.
 - O workflow `.github/workflows/terraform-plan.yml` atende pull requests para a
-  `main`; ele valida e gera o plano, mas não é o responsável pelo deploy.
+  `main`; ele valida a configuração sem acessar state ou credenciais OCI. O plano
+  revisado antes de qualquer apply é exclusivamente o do OCI Resource Manager.
 
 ## Providers externos
 
@@ -20,8 +21,8 @@
   valores diretamente nas variáveis do Stack do OCI Resource Manager.
 - Nunca adicione credenciais, arquivos `.tfvars` com valores reais ou Personal API
   Keys ao Git.
-- Variáveis obrigatórias novas também precisam ser disponibilizadas aos jobs de PR
-  que executam `terraform plan`, preferencialmente por GitHub Secrets.
+- Não configure credenciais OCI ou de providers SaaS no GitHub Actions enquanto o
+  workflow executar somente validação sem backend.
 
 ## Validação e segurança
 
