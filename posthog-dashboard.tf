@@ -22,6 +22,9 @@ resource "posthog_insight" "shared_event_volume" {
 }
 
 resource "posthog_insight" "shared_daily_activity" {
+  # Serialize insight creates because PostHog Cloud may return HTTP 500 when
+  # several insight POSTs arrive concurrently during one apply.
+  depends_on    = [posthog_insight.shared_event_volume]
   project_id    = var.posthog_project_id
   dashboard_ids = [posthog_dashboard.shared_product_health.id]
   name          = "Atividade diaria por produto (30 dias)"
@@ -38,6 +41,7 @@ resource "posthog_insight" "shared_daily_activity" {
 }
 
 resource "posthog_insight" "hirepair_funnel_progress" {
+  depends_on    = [posthog_insight.shared_daily_activity]
   project_id    = var.posthog_project_id
   dashboard_ids = [posthog_dashboard.shared_product_health.id]
   name          = "HirePair — progresso do funil (30 dias)"
@@ -55,6 +59,7 @@ resource "posthog_insight" "hirepair_funnel_progress" {
 }
 
 resource "posthog_insight" "kiwibit_business_outcomes" {
+  depends_on    = [posthog_insight.hirepair_funnel_progress]
   project_id    = var.posthog_project_id
   dashboard_ids = [posthog_dashboard.shared_product_health.id]
   name          = "Kiwibit — resultados de negocio (30 dias)"
@@ -72,6 +77,7 @@ resource "posthog_insight" "kiwibit_business_outcomes" {
 }
 
 resource "posthog_insight" "shared_browser_exceptions" {
+  depends_on    = [posthog_insight.kiwibit_business_outcomes]
   project_id    = var.posthog_project_id
   dashboard_ids = [posthog_dashboard.shared_product_health.id]
   name          = "Excecoes do navegador por produto (30 dias)"
