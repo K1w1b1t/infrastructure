@@ -26,14 +26,12 @@ resource "posthog_hog_function" "production_operational_alerts" {
         id         = "$exception"
         name       = "$exception"
         type       = "events"
-        order      = 0
         properties = [{ key = "environment", value = "production", operator = "exact", type = "event" }]
       },
       {
         id         = "ai_fallback_triggered"
         name       = "ai_fallback_triggered"
         type       = "events"
-        order      = 1
         properties = [{ key = "environment", value = "production", operator = "exact", type = "event" }]
       }
     ]
