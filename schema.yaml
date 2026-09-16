@@ -6,7 +6,7 @@ variableGroups:
     variables:
       - posthog_api_key
       - posthog_host
-      - posthog_project_name
+      - posthog_project_id
       - posthog_app_urls
       - posthog_discord_webhook_url
 
@@ -18,12 +18,11 @@ variables:
     required: true
     sensitive: true
 
-  posthog_project_name:
+  posthog_project_id:
     type: string
-    title: "Nome do projeto PostHog"
-    description: "Um unico projeto compartilhado entre hirepair_web e kiwibit_web."
-    required: false
-    default: "Kiwibit shared telemetry"
+    title: "PostHog Project ID"
+    description: "ID numerico do projeto PostHog existente, obtido em Project settings."
+    required: true
 
   posthog_app_urls:
     type: string

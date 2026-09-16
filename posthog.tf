@@ -2,15 +2,9 @@ locals {
   posthog_app_urls = jsondecode(jsondecode(var.posthog_app_urls))
 }
 
-# Projeto PostHog único para hirepair_web e kiwibit_web.
-# Importe este endereço no mesmo OCI Resource Manager Stack se o projeto já existir.
-resource "posthog_project" "shared_telemetry" {
-  name     = var.posthog_project_name
-  timezone = "America/Sao_Paulo"
-}
 
 resource "posthog_project_settings" "shared_telemetry" {
-  project_id = posthog_project.shared_telemetry.id
+  project_id = var.posthog_project_id
 
   app_urls          = local.posthog_app_urls
   recording_domains = local.posthog_app_urls
@@ -30,12 +24,5 @@ resource "posthog_project_settings" "shared_telemetry" {
 
 output "posthog_project_id" {
   description = "ID do projeto compartilhado para POSTHOG_PROJECT_ID nos builds Vercel de source maps."
-  value       = posthog_project.shared_telemetry.id
-}
-
-output "posthog_project_api_key" {
-  description = "Project API Key para SDKs; cadastre somente como variável Vercel."
-  value       = posthog_project.shared_telemetry.api_token
-  sensitive   = true
-
+  value       = var.posthog_project_id
 }
