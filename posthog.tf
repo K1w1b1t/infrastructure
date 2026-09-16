@@ -16,10 +16,6 @@ resource "posthog_project_settings" "shared_telemetry" {
 
   # Replay não captura payloads de rede; SDKs também mascaram texto e inputs.
   capture_performance_opt_in = false
-  session_recording_network_payload_capture_config = {
-    record_headers = false
-    record_body    = false
-  }
 }
 
 output "posthog_project_id" {
