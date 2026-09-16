@@ -1,7 +1,7 @@
 # Destination declarativa do template oficial Discord. O valor do webhook é
 # sensível no Stack e nunca é publicado como output ou variável de runtime.
 resource "posthog_hog_function" "production_operational_alerts" {
-  project_id  = posthog_project.shared_telemetry.id
+  project_id  = var.posthog_project_id
   template_id = "template-discord"
   name        = "Production operational alerts"
   description = "Exceções e fallbacks de IA de produção, sem PII."

@@ -31,10 +31,9 @@ variable "posthog_api_key" {
   sensitive   = true
 }
 
-variable "posthog_project_name" {
-  description = "Nome do projeto PostHog compartilhado entre hirepair_web e kiwibit_web"
+variable "posthog_project_id" {
+  description = "ID numerico do projeto PostHog compartilhado, obtido em Project settings"
   type        = string
-  default     = "Kiwibit shared telemetry"
 }
 
 variable "posthog_app_urls" {
