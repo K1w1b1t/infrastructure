@@ -28,7 +28,7 @@ A arquitetura base utiliza o plano *Always Free* da **Oracle Cloud Infrastructur
 - **Subnet Pública:** Sub-rede `10.0.1.0/24` onde os bots rodam.
 - **Compute Instance (VPS Minimal):** Uma máquina virtual (shape: `VM.Standard.E2.1.Micro`, 1 OCPU, 1GB RAM) rodando **Ubuntu 22.04**.
 - **Autenticação Automática SSH:** Injeção de chave pública via *metadata* durante o provisionamento.
-- **Object Storage (mídia do `kiwibit_web`):** Dois buckets — `kiwibit-media-staging` e `kiwibit-media-prod` — com `access_type = ObjectRead` (leitura pública de objeto, listagem privada), cada um com usuário IAM, grupo, policy escopada e Customer Secret Key próprios.
+- **Object Storage (mídia do `kiwibit_web`):** Dois buckets — `kiwibit-media-staging` e `kiwibit-media-prod` — com `access_type = ObjectRead` (leitura e listagem públicas de objetos), cada um com usuário IAM, grupo, policy escopada e Customer Secret Key próprios. Armazene neles apenas mídia pública.
 
 ### 📦 Módulo `modules/storage` — buckets de mídia
 

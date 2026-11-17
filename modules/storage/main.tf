@@ -2,7 +2,7 @@
 # Módulo Storage — bucket de mídia do kiwibit_web (Always Free)
 #
 # Instanciado uma vez por ambiente (staging e prod). Cada instância cria:
-#   - um bucket com leitura pública de objeto (sem listagem)
+#   - um bucket com leitura e listagem públicas de objetos
 #   - um usuário IAM dedicado, com policy escopada SOMENTE ao seu bucket
 #   - uma Customer Secret Key (credencial S3-compatível) para o app
 #
@@ -49,10 +49,9 @@ data "oci_objectstorage_namespace" "current" {
   compartment_id = var.compartment_ocid
 }
 
-# access_type = ObjectRead libera GET de objeto sem autenticação, mas mantém a
-# listagem do bucket privada — é o que permite servir a imagem publicamente sem
-# expor o inventário de arquivos.
+# ObjectRead permite leitura e listagem públicas; armazene apenas mídia pública.
 resource "oci_objectstorage_bucket" "media" {
+  # checkov:skip=CKV_OCI_10:Os buckets de mídia de staging e produção servem imagens públicas aos sites; não armazenar conteúdo privado neles.
   compartment_id = var.compartment_ocid
   namespace      = data.oci_objectstorage_namespace.current.namespace
   name           = local.bucket_name
@@ -77,8 +76,8 @@ resource "oci_identity_user" "app" {
   name           = local.user_name
   # IDCS exige e-mail primário na criação. Plus-addressing mantém tudo na
   # caixa tech@kiwibit.com.br mas com endereço único por ambiente.
-  email          = "tech+media-${var.environment}@kiwibit.com.br"
-  description    = "Usuário de serviço do kiwibit_web para upload de mídia (${var.environment})"
+  email       = "tech+media-${var.environment}@kiwibit.com.br"
+  description = "Usuário de serviço do kiwibit_web para upload de mídia (${var.environment})"
 
   freeform_tags = {
     project     = "kiwibit_web"
