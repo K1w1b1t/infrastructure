@@ -54,16 +54,25 @@ Os recursos de identidade (`oci_identity_user`, `_group`, `_policy`) usam `compa
 2. **As duas Customer Secret Keys ficam no state do Resource Manager.** É o custo de gerenciar credencial por IaC. Se preferir, remova o recurso `oci_identity_customer_secret_key` do módulo e gere as chaves pelo console.
 3. **Always Free limita 50.000 requests de Object Storage por mês.** O `kiwibit_web` serve toda imagem via `next/image`, o que faz a Vercel cachear no edge (TTL padrão de 31 dias) e reduz as leituras no origin a praticamente nada. **Nunca** referenciar a URL do bucket direto no HTML.
 
-**Pipelines (CI/CD) Implementadas (`.github/workflows`):**
-A automação ocorre através do GitHub Actions para toda PR criada na `main`:
-1. **SonarQube Quality Gate:** O código passa por análises de vulnerabilidades/code-smell de forma assíncrona; e atua como Gate (barrando commits não seguros antes do deploy).
-2. **Terraform Plan:** Se a qualidade passar, o provider simula a nova infra validando contra a conta OCI dinamicamente (injeção via chaves efêmeras).
+**Verificações de PR (`.github/workflows`):**
+
+Para PRs destinadas à `main`, o GitHub Actions executa `terraform init
+-backend=false`, `terraform validate` e análises estáticas com Checkov e Trivy.
+Os scanners exibem os resultados nos logs e falham quando encontram problemas;
+os checks só bloqueiam o merge se forem exigidos nas regras de proteção da branch.
+O tfsec não roda separadamente, pois suas verificações foram incorporadas ao Trivy.
+
+As análises não usam credenciais OCI nem acessam state. A cobertura depende das
+regras de cada ferramenta e pode ser limitada para recursos OCI; ausência de
+achados não garante que a infraestrutura esteja segura. O plano com o state real
+é gerado e revisado no OCI Resource Manager após o merge, antes do apply.
 
 ---
 
 ## ⚙️ Pré-requisitos para novos desenvolvedores
 
-Para interagir com este repositório, você precisa configurar os segredos requeridos para as pipelines funcionarem e interagir com o estado do Terraform no Cloud de forma remota. 
+As verificações do GitHub Actions não precisam de segredos OCI ou SaaS. As
+credenciais de execução ficam configuradas no Stack do OCI Resource Manager.
 
 ### PostHog no OCI Resource Manager
 
